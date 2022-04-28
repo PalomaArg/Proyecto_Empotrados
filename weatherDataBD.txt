@@ -1,7 +1,8 @@
 CREATE DATABASE weatherData;
 
-create table humedadtb(
+create table tempHumDB(
 weatherDataID int(11) AUTO_INCREMENT not null,
 humedad int NULL,
+temperatura int NULL,
 constraint primary key weatherData_PK (weatherDataID)
 );

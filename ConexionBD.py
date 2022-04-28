@@ -17,10 +17,11 @@ while True:
     data = arduino.readline().decode('utf-8')[:-2]
     # Datos mostrados obtenidos del puerto que  se agregaran a la bd
     print(data)
+    pieces = data.split(" ")  #Split de los datos
     # Insersión de los datos
-    query = "INSERT INTO humedadtb (humedad) VALUES (%s)"
+    query = "INSERT INTO tempHumDB (humedad, temperatura) VALUES (%s, %s)"
     # Ejecución del query
-    cursor.execute(query,(data,))
+    cursor.execute(query,((pieces[0],pieces[1]),))
     dbConn.commit()
 # Se cierra la conexión
 cursor.close()
