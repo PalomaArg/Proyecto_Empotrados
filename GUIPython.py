@@ -23,7 +23,7 @@ class GUI(object):
         btn.pack()
 
     def humedadfrm(self):
-        my_conn = mysql.connector.connect(user="root", password="1234",
+        my_conn = mysql.connector.connect(user="root", password="ElCochaLoquis300",
                                           host="localhost",
                                           database="weatherdata")
 
