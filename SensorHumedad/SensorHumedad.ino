@@ -16,7 +16,9 @@ LiquidCrystal_I2C lcd(0x27 ,16,2); //Creación el objeto lcd  dirección  0x27 y
 int sensorPin = A0;   // Entrada analogica del sensor
 int ledPin = 13;      // Salida del LED
 int sensorValue = 0;  // Valor inicial del sensor
+int bomba = 8;
 String humedad = "Humedad: "; //Texto en pantalla
+String temperaturas = "Temperatura: "; //Texto en pantalla
 
 void setup() {
   lcd.init(); // Inicializar el LCD
@@ -24,6 +26,7 @@ void setup() {
   Serial.begin(9600);
   dht.begin();
   pinMode(ledPin, OUTPUT);
+  pinMode(bomba,OUTPUT);
 }
 
 void loop() {
@@ -32,7 +35,13 @@ void loop() {
   sensorValue = analogRead(sensorPin);
   lcd.setCursor(10,0);
   lcd.print(sensorValue,1);//1 decimal
+  
   float temperatura = dht.readTemperature(); // Leemos la temperatura en grados centígrados (por defecto)
+  lcd.setCursor(0,1); //Ubicación de las lineas del mensaje de humedad
+  lcd.print(temperaturas);
+  lcd.setCursor(12,1);
+  lcd.print(temperatura,1);//1 decimal
+  
   Serial.print(sensorValue); //Imprime en consola el valor recolectado por el sensor
   Serial.print(" ");
   Serial.print(temperatura); //Imprime en consola el valor recolectado por el lector de temperatura
@@ -42,4 +51,10 @@ void loop() {
   delay(500);
   digitalWrite(ledPin, LOW);
   delay(500);
+  if(sensorValue>=600 && sensorValue<=1024){
+    digitalWrite(bomba,LOW);
+  }
+  else{
+   digitalWrite(bomba,HIGH);
+  }
 }

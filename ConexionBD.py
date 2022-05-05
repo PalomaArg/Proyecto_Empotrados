@@ -2,13 +2,13 @@ import serial
 import mysql.connector
 from datetime import datetime
 # Conexión con la bd de mysql
-dbConn = mysql.connector.connect(user="root", password="ElCochaLoquis300",
-                                 host="localhost", database="weatherdata")
+dbConn = mysql.connector.connect(user="root", password="1234",
+                                 host="localhost", database="weatherdata2")
 
 # Se abre el cursor para la bd
 cursor = dbConn.cursor()
 # Puerto utilizado
-arduino = serial.Serial('COM3', 9600, timeout=3)
+arduino = serial.Serial('COM4', 9600, timeout=3)
 
 while True:
     # Lee los datos y elimina los dos ultimos caracteres con el salto de linea
@@ -29,6 +29,3 @@ while True:
     dbConn.commit()
 # Se cierra la conexión
 cursor.close()
-
-# Puedes llevarlo el martes ya jalando? Que registre en la base de datos todo pls
-# Y también ponle un atributo para la hora['25.70']
