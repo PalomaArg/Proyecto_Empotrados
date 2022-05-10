@@ -2,7 +2,7 @@ import serial
 import mysql.connector
 from datetime import datetime
 # Conexión con la bd de mysql
-dbConn = mysql.connector.connect(user="root", password="1234",
+dbConn = mysql.connector.connect(user="root", password="NuevaContrasenia123",
                                  host="localhost", database="weatherdata2")
 
 # Se abre el cursor para la bd
