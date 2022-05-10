@@ -3,7 +3,7 @@ import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 
-mydb = mysql.connector.connect(user="root", password="NuevaContrasenia123",
+mydb = mysql.connector.connect(user="root", password="1234",
                                 host="localhost", database="weatherdata2")
 
 cursor = mydb.cursor()
