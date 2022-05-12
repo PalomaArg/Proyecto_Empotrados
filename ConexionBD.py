@@ -20,12 +20,13 @@ while True:
     pieces = data.split(" ")  #Split de los datos
     print(pieces[0])
     print(pieces[1])
+    print(pieces[2])
     print(fecha)
     print()
     # Insersión de los datos
-    query = "INSERT INTO tempHumDB (humedad, temperatura, tiempoRegistro) VALUES (%s, %s, %s)"
+    query = "INSERT INTO tempHumDB (humedad, temperatura, tiempoRegistro, estadoBomba) VALUES (%s, %s, %s, %s)"
     # Ejecución del query
-    cursor.execute(query,(pieces[0],pieces[1],fecha))
+    cursor.execute(query,(pieces[0],pieces[1],fecha,pieces[2]))
     dbConn.commit()
 # Se cierra la conexión
 cursor.close()
