@@ -14,10 +14,14 @@ class GUI(object):
 
     def __init__(self, parent):
         self.root = parent
-        label = tk.Label(root, text="Nivel de humedad actual: ")
+        
+        
+        datos= self.info()
+        label = tk.Label(root, text="Nivel de humedad actual: "+ datos[0])
         label.pack()
-        label = tk.Label(root, text="Estado: ")
+        label = tk.Label(root, text="Estado: "+datos[1])
         label.pack()
+           
         self.root.title("Main")
         self.frame = tk.Frame(parent)
         self.frame.pack()
@@ -31,46 +35,59 @@ class GUI(object):
         btnTemperatura.pack()
         
         btnEstado = tk.Button(self.frame, text="Estados de la bomba",
-                        command=self.estadofrm)
+                        command=self.estadosfrm)
         btnEstado.pack()
+        
+        btnPastel = tk.Button(self.frame, text="Estados",
+                        command=self.grafica_pastel)
+        btnPastel.pack()
         
 
 
     def estadosfrm(self):
+        '''
+        Función que muestra una tabla con los datos de id, humedad, temperatura,
+        tiempoRegistro y estadoBomba.
+
+        '''
         
-         my_conn = mysql.connector.connect(user="root", password="1234",
+        my_conn = mysql.connector.connect(user="root", password="NuevaContrasenia123",
                                            host="localhost",
                                            database="weatherdata2")
-         cursor = my_conn.cursor()
+        cursor = my_conn.cursor()
 
-         sql = "SELECT * FROM temphumdb"
-         cursor.execute(sql)
-         rows = cursor.fetchall()
-         total = cursor.rowcount
-         print("total data entries:"+str(total))
+        sql = "SELECT * FROM temphumdb"
+        cursor.execute(sql)
+        rows = cursor.fetchall()
+        total = cursor.rowcount
 
-         win = Tk()
-         frm = Frame(win)
-         frm.pack(side=tk.LEFT, padx=5)
+        win = Tk()
+        frm = Frame(win)
+        frm.pack(side=tk.LEFT, padx=5)
 
-         tv = ttk.Treeview(frm, columns=(1,2,3,4,5), show="headings", height="8")
-         tv.pack()
-         tv.heading(1, text="weatherDataID")
-         tv.heading(2, text="humedad")
-         tv.heading(3, text="temperatura")
-         tv.heading(4, text="tiempoRegistro")
-         tv.heading(5, text="estadoBomba")
+        tv = ttk.Treeview(frm, columns=(1,2,3,4,5), show="headings", height="8")
+        tv.pack()
+        tv.heading(1, text="weatherDataID")
+        tv.heading(2, text="humedad")
+        tv.heading(3, text="temperatura")
+        tv.heading(4, text="tiempoRegistro")
+        tv.heading(5, text="estadoBomba")
         
-         for i in rows:
+        for i in rows:
             tv.insert('',tk.END,values=i)
 
-         win.title("Datos")
-         win.geometry("8000x400")
-         win.resizable(False, False)
-         win.mainloop()
+        win.title("Datos")
+        win.geometry("1000x400")
+        win.resizable(False, False)
+        my_conn.close()
+        win.mainloop()
 
     def temperaturafrm(self):
-        my_conn = mysql.connector.connect(user="root", password="1234",
+        '''
+        Función que displiega una pantalla con una gráfica de barra mostrando las niveles
+        de temperaturas de cada registro
+        '''
+        my_conn = mysql.connector.connect(user="root", password="NuevaContrasenia123",
                                           host="localhost",
                                           database="weatherdata2")
 
@@ -92,7 +109,11 @@ class GUI(object):
         my_conn.close()
 
     def humedadfrm(self):
-        my_conn = mysql.connector.connect(user="root", password="1234",
+        '''
+        Función que despliega una pantalla con una gráfica de barra que muestra la humedad
+        de cada registro.
+        '''
+        my_conn = mysql.connector.connect(user="root", password="NuevaContrasenia123",
                                           host="localhost",
                                           database="weatherdata2")
 
@@ -114,29 +135,55 @@ class GUI(object):
         my_conn.close()
         
         
-
-    def estadofrm(self):
-        my_conn = mysql.connector.connect(user="root", password="1234",
+    def grafica_pastel(self):
+        '''
+        Función que despliega una pantalla con una gráfica de pastel con los datos
+        del estadoBomba
+        '''
+        contadorPositivo=0
+        contadorNegativo=0
+        root= tk.Tk()
+        my_conn = mysql.connector.connect(user="root", password="NuevaContrasenia123",
                                           host="localhost",
                                           database="weatherdata2")
+        sql="SELECT estadoBomba FROM temphumdb"
+        cursor=my_conn.cursor()
+        cursor.execute(sql)
+        datos = cursor.fetchall()
+        for i in datos:
+            if i[0]=="ACTIVADO":
+                contadorPositivo=contadorPositivo+1
+            elif i[0]=="DESACTIVADO":
+                contadorNegativo=contadorNegativo+1
 
-        query = "SELECT * FROM temphumdb ORDER BY weatherDataID"
-        df = pd.read_sql(query,my_conn)
-        
-        df1 = DataFrame(df, columns=['weatherDataID', 'temperatura'])
-        root = tk.Tk()
-        
-        
-        figure1 = plt.Figure(figsize=(6, 5), dpi=100)
-        lb= [row for row in df['temperatura']] 
-        plot=df.plot.pie(title="weatherDataID ",y='temperatura',labels=lb,autopct='%1.0f%%')
+        estado = [contadorPositivo,contadorNegativo]
+        nombres = ["Estado Activo","Estado inactivo"]
+        colores = ["#60D394","#EE6055"]
+        plt.pie(estado, labels=nombres, autopct="%0.1f %%", colors=colores)
+        plt.show()
         
         root.mainloop()
         my_conn.close()
-
-
+        
+    def info(self):
+        
+        my_conn = mysql.connector.connect(user="root", password="NuevaContrasenia123",
+                                          host="localhost",
+                                          database="weatherdata2")
+        sql="SELECT humedad, estadoBomba from temphumdb ORDER BY weatherDataID DESC LIMIT 1"
+        cursor=my_conn.cursor()
+        cursor.execute(sql)
+        
+        rows = cursor.fetchall()
+        data = rows[0]
+        my_conn.close()
+        return str(data[0]),str(data[1])
+        
+        
 if __name__ == "__main__":
     root = tk.Tk()
     root.geometry("400x300")
     app = GUI(root)
     root.mainloop()
+
+    
